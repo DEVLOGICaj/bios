@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Full BIOS Simulator 2008 - Persistent Storage</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: "Courier New", Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+        .bios-container {
+            width: 900px;
+            height: 580px;
+            background-color: #0000aa;
+            border: 4px double #fff;
+            padding: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .bios-header {
+            text-align: center;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .bios-subheader {
+            text-align: center;
+            color: #ffff55;
+            margin: 5px 0;
+            font-size: 15px;
+            font-weight: bold;
+            height: 20px;
+        }
+        .main-screen { display: flex; flex: 1; }
+        .column { width: 50%; padding: 15px 10px; }
+        .menu-item { padding: 6px 10px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .menu-item.active { background-color: #aa0000; color: #ffff55; }
+        .sub-screen { display: none; flex: 1; flex-direction: column; padding: 10px; }
+        .sub-content { display: flex; flex: 1; }
+        .sub-list { width: 65%; border-right: 2px solid #fff; padding-right: 10px; }
+        .help-box { width: 35%; padding-left: 15px; font-size: 13px; }
+        .help-title { color: #ffff55; text-align: center; border-bottom: 1px solid #fff; padding-bottom: 5px; margin-bottom: 10px; }
+        .list-row { display: flex; justify-content: space-between; padding: 5px; font-size: 14px; font-weight: bold; }
+        .list-row.active { background-color: #aa0000; color: #ffff55; }
+        .bios-footer { border-top: 2px solid #fff; padding-top: 5px; text-align: center; font-size: 13px; color: #fff; }
+        .copyright { text-align: center; font-size: 12px; color: #aaa; margin-top: 5px; }
+        .popup-box { display: none; position: absolute; background-color: #0000aa; border: 3px solid #ff5555; box-shadow: 12px 12px 0px #000; z-index: 10; }
+        #options-popup { top: 35%; left: 38%; width: 220px; }
+        #exit-popup { top: 40%; left: 25%; width: 400px; text-align: center; }
+        .popup-title { background-color: #ff5555; color: #fff; text-align: center; padding: 3px; font-size: 14px; font-weight: bold; }
+        .popup-body { padding: 10px; }
+        .pop-item { padding: 5px; text-align: center; font-weight: bold; }
+        .pop-item.active { background-color: #aa0000; color: #ffff55; }
+        .exit-text { padding: 15px 10px; font-size: 15px; font-weight: bold; }
+        .exit-buttons { display: flex; justify-content: center; gap: 40px; font-weight: bold; font-size: 15px; padding-bottom: 10px;}
+        .exit-btn.active { color: #ffff55; background-color: #aa0000; padding: 2px 10px; }
+    </style>
+</head>
+<body>
+
+<div class="bios-container">
+    <div class="bios-header">CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.</div>
+    <div class="bios-subheader" id="bios-subtitle"></div>
+
+    <div class="main-screen" id="screen-main">
+        <div class="column" id="main-col-left">
+            <div class="menu-item active" data-action="sub" data-target="screen-info">▶ System Information</div>
+            <div class="menu-item" data-action="sub" data-target="screen-advanced">▶ Advanced BIOS Features</div>
+            <div class="menu-item" data-action="sub" data-target="screen-chipset">▶ Advanced Chipset Features</div>
+            <div class="menu-item" data-action="sub" data-target="screen-peripherals">▶ Integrated Peripherals</div>
+            <div class="menu-item" data-action="sub" data-target="screen-power">▶ Power Management Setup</div>
+        </div>
+        <div class="column" id="main-col-right">
+            <div class="menu-item" data-action="sub" data-target="screen-health">▶ PC Health Status</div>
+            <div class="menu-item" data-action="alert-pass" data-msg="Supervisor Password">Set Supervisor Password</div>
+            <div class="menu-item" data-action="alert-pass" data-msg="User Password">Set User Password</div>
+            <div class="menu-item" data-action="load-defaults">Load Optimal Defaults</div>
+            <div class="menu-item" data-action="trigger-exit">Save & Exit Setup</div>
+        </div>
+    </div>
+
+    <div class="sub-screen" id="screen-info">
+        <div class="sub-content">
+            <div class="sub-list">
+                <div class="list-row"><span>BIOS Version</span><span>v02.63</span></div>
+                <div class="list-row"><span>Build Date</span><span>08/11/08</span></div>
+                <div class="list-row"><span>Core Version</span><span>08.00.14</span></div>
+                <div class="list-row"><span>System Language</span><span>[English]</span></div>
+                <div class="list-row"><span>System Date</span><span>[Sun 05/17/2026]</span></div>
+                <div class="list-row"><span>System Time</span><span>[12:52:00]</span></div>
+                <div class="list-row"><span>Total Memory</span><span>2048 MB (DDR2)</span></div>
+            </div>
+            <div class="help-box"><div class="help-title">Help Item</div>Press [Enter] to configure System settings.</div>
+        </div>
+    </div>
+
+    <div class="sub-screen" id="screen-advanced"><div class="sub-content"><div class="sub-list" id="advanced-list"></div><div class="help-box"><div class="help-title">Help Item</div>Set Boot Device Priority order.</div></div></div>
+    <div class="sub-screen" id="screen-chipset"><div class="sub-content"><div class="sub-list" id="chipset-list"></div><div class="help-box"><div class="help-title">Help Item</div>Configure Chipset features.</div></div></div>
+    <div class="sub-screen" id="screen-peripherals"><div class="sub-content"><div class="sub-list" id="peripherals-list"></div><div class="help-box"><div class="help-title">Help Item</div>Enable/Disable integrated items and USB.</div></div></div>
+    <div class="sub-screen" id="screen-power"><div class="sub-content"><div class="sub-list" id="power-list"></div><div class="help-box"><div class="help-title">Help Item</div>Configure power settings.</div></div></div>
+
+    <div class="sub-screen" id="screen-health">
+        <div class="sub-content">
+            <div class="sub-list">
+                <div class="list-row"><span>CPU Warning Temperature</span><span>[Disabled]</span></div>
+                <div class="list-row"><span>CPU Temperature</span><span style="color: #ffff55;">30°C</span></div>
+                <div class="list-row"><span>System Temperature</span><span style="color: #ffff55;">20°C</span></div>
+                <div class="list-row"><span>CPU Fan Speed</span><span style="color: #ffff55;">2239 RPM</span></div>
+                <div class="list-row"><span>CPU Core Voltage</span><span>1.248 V</span></div>
+            </div>
+            <div class="help-box"><div class="help-title">Help Item</div>Monitor CPU temperatures and voltages.</div>
+        </div>
+    </div>
+
+    <div class="bios-footer" id="bios-nav-help">↑↓: Move  Enter: Select  F10: Save  ESC: Exit</div>
+    <div class="copyright" id="bios-ver-footer">v02.63 (C) Copyright 1985-2008, American Megatrends, Inc.</div>
+
+    <div class="popup-box" id="options-popup">
+        <div class="popup-title">Options</div>
+        <div class="popup-body" id="popup-options-body"></div>
+    </div>
+
+    <div class="popup-box" id="exit-popup">
+        <div class="popup-title">Setup Confirmation</div>
+        <div class="exit-text">Save configuration changes and exit setup?</div>
+        <div class="exit-buttons">
+            <div class="exit-btn active" id="btn-ok">[Ok]</div>
+            <div class="exit-btn" id="btn-cancel">[Cancel]</div>
+        </div>
+    </div>
+</div>
+<script>
+    const defaultData = {
+        advanced: [
+            { label: "1st Boot Device", value: "Hard Drive", options: ["Hard Drive", "CDROM", "USB Flash", "Disabled"] },
+            { label: "2nd Boot Device", value: "CDROM", options: ["Hard Drive", "CDROM", "USB Flash", "Disabled"] },
+            { label: "3rd Boot Device", value: "USB Flash", options: ["Hard Drive", "CDROM", "USB Flash", "Disabled"] }
+        ],
+        chipset: [
+            { label: "Onboard VGA Share Memory", value: "64MB", options: ["32MB", "64MB", "128MB", "256MB"] }
+        ],
+        peripherals: [
+            { label: "Legacy USB Support", value: "Enabled", options: ["Disabled", "Enabled"] },
+            { label: "USB 1.1 Controller", value: "Enabled", options: ["Disabled", "Enabled"] },
+            { label: "USB 2.0 Controller", value: "Enabled", options: ["Disabled", "Enabled"] },
+            { label: "USB Keyboard Support", value: "Enabled", options: ["Disabled", "Enabled"] }
+        ],
+        power: [
+            { label: "ACPI Suspend Type", value: "S3 (STR)", options: ["S1 (POS)", "S3 (STR)"] }
+        ]
+    };
+
+    let menusData = JSON.parse(localStorage.getItem('bios_save_data')) || defaultData;
+
+    let currentScreen = "main";
+    let mainIndex = 0;         
+    let subIndex = 0;          
+    let popupOpen = false;     
+    let popupIndex = 0;        
+    let exitOpen = false;      
+    let exitIndex = 0;         
+
+    const mainItems = [...document.querySelectorAll('.menu-item')];
+    const optionsPopup = document.getElementById('options-popup');
+    const popupOptionsBody = document.getElementById('popup-options-body');
+    const exitPopup = document.getElementById('exit-popup');
+    const subtitle = document.getElementById('bios-subtitle');
+
+    function init() {
+        renderSubMenus();
+        updateScreenVisibility();
+    }
+
+    function renderSubMenus() {
+        ['advanced', 'chipset', 'peripherals', 'power'].forEach(key => {
+            const container = document.getElementById(`${key}-list`);
+            if (!container) return;
+            container.innerHTML = '';
+            menusData[key].forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = `list-row ${currentScreen === key && idx === subIndex ? 'active' : ''}`;
+                row.innerHTML = `<span>${item.label}</span><span>[${item.value}]</span>`;
+                container.appendChild(row);
+            });
+        });
+    }
+
+    function updateScreenVisibility() {
+        const screens = ['main', 'info', 'advanced', 'chipset', 'peripherals', 'power', 'health'];
+        screens.forEach(s => document.getElementById(`screen-${s}`).style.display = currentScreen === s ? 'flex' : 'none');
+        document.getElementById('bios-ver-footer').style.display = currentScreen === 'main' ? 'block' : 'none';
+
+        if (currentScreen === 'main') {
+            subtitle.innerText = "";
+            mainItems.forEach((item, idx) => item.classList.toggle('active', idx === mainIndex));
+        } else {
+            subtitle.innerText = currentScreen.toUpperCase() + " FEATURES";
+            renderSubMenus();
+        }
+    }
+
+    function openOptionsPopup() {
+        const item = menusData[currentScreen][subIndex];
+        popupOptionsBody.innerHTML = '';
+        popupIndex = item.options.indexOf(item.value);
+        item.options.forEach((opt, idx) => {
+            const div = document.createElement('div');
+            div.className = `pop-item ${idx === popupIndex ? 'active' : ''}`;
+            div.id = `pop-opt-${idx}`;
+            div.innerText = opt;
+            popupOptionsBody.appendChild(div);
+        });
+        popupOpen = true;
+        optionsPopup.style.display = 'block';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (exitOpen) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                exitIndex = exitIndex === 0 ? 1 : 0;
+                document.getElementById('btn-ok').classList.toggle('active', exitIndex === 0);
+                document.getElementById('btn-cancel').classList.toggle('active', exitIndex === 1);
+            } else if (e.key === 'Enter') {
+                if (exitIndex === 0) {
+                    localStorage.setItem('bios_save_data', JSON.stringify(menusData));
+                    alert("تم حفظ التعديلات بذاكرة الموبايل/المتصفح بنجاح (Persistent Save)!");
+                    location.reload();
+                } else {
+                    exitOpen = false;
+                    exitPopup.style.display = 'none';
+                }
+            }
+            return;
+        }
+
+        if (popupOpen) {
+            const opts = menusData[currentScreen][subIndex].options;
+            if (e.key === 'ArrowDown') { popupIndex = (popupIndex + 1) % opts.length; }
+            else if (e.key === 'ArrowUp') { popupIndex = (popupIndex - 1 + opts.length) % opts.length; }
+            else if (e.key === 'Enter') {
+                menusData[currentScreen][subIndex].value = opts[popupIndex];
+                popupOpen = false;
+                optionsPopup.style.display = 'none';
+                renderSubMenus();
+                localStorage.setItem('bios_save_data', JSON.stringify(menusData));
+            }
+            if (popupOpen) {
+                opts.forEach((_, i) => {
+                    const el = document.getElementById(`pop-opt-${i}`);
+                    if(el) el.classList.toggle('active', i === popupIndex);
+                });
+            }
+            return;
+        }
+
+        if (currentScreen === "main") {
+            if (e.key === 'ArrowDown') { mainIndex = (mainIndex + 1) % mainItems.length; updateScreenVisibility(); }
+            else if (e.key === 'ArrowUp') { mainIndex = (mainIndex - 1 + mainItems.length) % mainItems.length; updateScreenVisibility(); }
+            else if (e.key === 'Enter') {
+                const act = mainItems[mainIndex].getAttribute('data-action');
+                if (act === 'sub') { currentScreen = mainItems[mainIndex].getAttribute('data-target').replace('screen-', ''); subIndex = 0; updateScreenVisibility(); }
+                else if (act === 'trigger-exit' || e.key === 'F10') { exitOpen = true; exitPopup.style.display = 'block'; }
+                else if (act === 'load-defaults') { localStorage.removeItem('bios_save_data'); menusData = defaultData; renderSubMenus(); alert("تمت العودة للافتراضي."); }
+            }
+        } else {
+            if (e.key === 'Escape') { currentScreen = 'main'; updateScreenVisibility(); }
+            else if (e.key === 'ArrowDown' && menusData[currentScreen]) { subIndex = (subIndex + 1) % menusData[currentScreen].length; renderSubMenus(); }
+            else if (e.key === 'ArrowUp' && menusData[currentScreen]) { subIndex = (subIndex - 1 + menusData[currentScreen].length) % menusData[currentScreen].length; renderSubMenus(); }
+            else if (e.key === 'Enter' && menusData[currentScreen]) { openOptionsPopup(); }
+        }
+    });
+
+    init();
+</script>
+</body>
+</html>
