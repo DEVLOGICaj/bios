@@ -4,17 +4,14 @@ const biosData = {
         title: 'CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.',
         columns: [
             [
-                { text: 'System Information', target: 'sys_info', desc: 'Configure Time and Date. Display System Information...' },
-                { text: 'Advanced BIOS Features', target: 'boot_priority', desc: 'Advanced BIOS Features Settings...' },
-                { text: 'Fox Central Control Unit', target: 'fox_control', desc: 'Fox Central Control Unit configurations...' },
+                { text: 'Standard CMOS Features', target: 'sys_info', desc: 'Standard CMOS Features Setup including Time, Date, Hard Disk...' },
+                { text: 'Advanced BIOS Features', target: 'boot_priority', desc: 'Advanced BIOS Features Settings including Boot Sequence...' },
                 { text: 'Advanced Chipset Features', target: 'chipset_features', desc: 'Advanced Chipset Features and settings...' },
                 { text: 'Integrated Peripherals', target: 'integrated_peripherals', desc: 'Configure integrated peripherals and ports...' },
                 { text: 'Power Management Setup', target: 'power_management', desc: 'Power Management Setup Options...' }
             ],
             [
-                { text: 'PC Health Status', target: 'pc_health', desc: 'Monitor PC Health Status, Temperature and Fan Speed...' },
-                { text: 'Set Supervisor Password', target: 'supervisor_pwd', desc: 'Set or change Supervisor Password...' },
-                { text: 'Set User Password', target: 'user_pwd', desc: 'Set or change User Password...' },
+                { text: 'PC Health Status', target: 'pc_health', desc: 'Monitor PC Health Status, Temperature, Fan Speed and Voltage...' },
                 { text: 'Load Optimal Defaults', target: 'load_defaults', desc: 'Load Optimal Default configurations...' },
                 { text: 'Save & Exit Setup', target: 'save_exit', desc: 'Save all changes to CMOS and Exit...' },
                 { text: 'Exit Without Saving', target: 'exit_no_save', desc: 'Exit Utility without saving any changes...' }
@@ -23,18 +20,20 @@ const biosData = {
     },
     sys_info: {
         type: 'sub',
-        title: 'System Information',
+        title: 'Standard CMOS Features',
         items: [
-            { text: 'System Time', value: '[00:00:00]', editable: true, id: 'system-time' },
-            { text: 'System Date', value: '[Sun 01/01/2026]', editable: true, id: 'system-date' },
-            { text: 'Primary IDE Master', value: '[ATAPI CDROM]', editable: false },
-            { text: 'Primary IDE Slave', value: '[Not Detected]', editable: false },
-            { text: 'SATA Channel 1 Master', value: '[Not Detected]', editable: false },
-            { text: 'SATA Channel 2 Master', value: '[Not Detected]', editable: false },
-            { text: 'SATA Channel 3 Master', value: '[Not Detected]', editable: false },
-            { text: 'SATA Channel 4 Master', value: '[Hard Disk]', editable: false },
-            { text: 'Floppy A', value: '[1.44 MB 3½"]', editable: false },
-            { text: 'Halt On', value: '[No Errors]', editable: true }
+            { text: 'Date (mm:dd:yy)', value: '[Sun 01/01/2026]', editable: true, id: 'system-date' },
+            { text: 'Time (hh:mm:ss)', value: '[00:00:00]', editable: true, id: 'system-time' },
+            { text: '  IDE Channel 0 Master', value: '[None]', editable: false },
+            { text: '  IDE Channel 0 Slave', value: '[None]', editable: false },
+            { text: '  IDE Channel 1 Master', value: '[None]', editable: false },
+            { text: '  IDE Channel 1 Slave', value: '[None]', editable: false },
+            { text: '  SATA Channel 1', value: '[None]', editable: false },
+            { text: '  SATA Channel 2', value: '[None]', editable: false },
+            { text: '  SATA Channel 3', value: '[None]', editable: false },
+            { text: '  SATA Channel 4', value: '[WDC WD5000AAKS-00YGA0]', editable: false },
+            { text: 'Drive A', value: '[1.44M, 3.5 in.]', editable: true },
+            { text: 'Halt On', value: '[All Errors]', editable: true }
         ]
     },
     boot_priority: {
@@ -42,35 +41,30 @@ const biosData = {
         title: 'Advanced BIOS Features',
         help: 'Specifies the boot sequence from the available devices.',
         items: [
-            { id: 'boot1', text: '1st Boot Device', value: '[CD/DVD:PM-HL-DT-ST]', editable: true },
-            { id: 'boot2', text: '2nd Boot Device', value: '[SATA:4S-WDC WD5000]', editable: true },
-            { id: 'boot3', text: '3rd Boot Device', value: '[1st FLOPPY DRIVE]', editable: true },
-            { id: 'boot_try', text: 'Try Other Boot Devices', value: '[Yes]', editable: true }
-        ]
-    },
-    fox_control: {
-        type: 'sub',
-        title: 'Fox Central Control Unit',
-        items: [
-            { text: 'Fox Intelligent Stepping', value: '[Disabled]', editable: true },
-            { text: 'CPU Clock Ratio', value: '[9x]', editable: true }
+            { id: 'boot1', text: '1st Boot Device', value: '[CDROM]', editable: true },
+            { id: 'boot2', text: '2nd Boot Device', value: '[Hard Disk]', editable: true },
+            { id: 'boot3', text: '3rd Boot Device', value: '[Disabled]', editable: true },
+            { text: 'Boot Up NumLock Status', value: '[On]', editable: true },
+            { text: 'Security Option', value: '[Setup]', editable: true }
         ]
     },
     chipset_features: {
         type: 'sub',
         title: 'Advanced Chipset Features',
         items: [
-            { text: 'North Bridge Configuration', value: '[Press Enter]', editable: false },
-            { text: 'South Bridge Configuration', value: '[Press Enter]', editable: false }
+            { text: 'System BIOS Cacheable', value: '[Enabled]', editable: true },
+            { text: 'Video BIOS Cacheable', value: '[Disabled]', editable: true }
         ]
     },
     integrated_peripherals: {
         type: 'sub',
         title: 'Integrated Peripherals',
         items: [
+            { text: 'On-Chip Primary PCI IDE', value: '[Enabled]', editable: true },
             { text: 'Onboard LAN Controller', value: '[Enabled]', editable: true },
             { text: 'Onboard Audio Controller', value: '[Enabled]', editable: true },
-            { text: 'USB Keyboard Function', value: '[Enabled]', editable: true }
+            { text: 'USB Controller', value: '[Enabled]', editable: true },
+            { text: 'USB Keyboard Support', value: '[Enabled]', editable: true }
         ]
     },
     power_management: {
@@ -78,6 +72,7 @@ const biosData = {
         title: 'Power Management Setup',
         items: [
             { text: 'ACPI Suspend Type', value: '[S3(STR)]', editable: true },
+            { text: 'Soft-Off by PWR-BTTN', value: '[Instant-Off]', editable: true },
             { text: 'Restore on AC Power Loss', value: '[Power Off]', editable: true }
         ]
     },
@@ -85,17 +80,18 @@ const biosData = {
         type: 'sub',
         title: 'PC Health Status',
         items: [
+            { text: 'Shutdown Temperature', value: '[Disabled]', editable: true },
             { text: 'CPU Temperature', value: '40 °C / 104 °F', editable: false },
             { text: 'System Temperature', value: '33 °C / 91 °F', editable: false },
             { text: 'CPU Fan Speed', value: '2295 RPM', editable: false },
             { text: 'Vcore', value: '1.248 V', editable: false },
-            { text: '3.3V Voltage', value: '3.328 V', editable: false }
+            { text: '3.3V Voltage', value: '3.328 V', editable: false },
+            { text: '5V Voltage', value: '5.043 V', editable: false },
+            { text: '12V Voltage', value: '12.032 V', editable: false }
         ]
     },
-    supervisor_pwd: { type: 'sub', title: 'Set Supervisor Password', items: [{ text: 'Enter New Password', value: '[ ]', editable: true }] },
-    user_pwd: { type: 'sub', title: 'Set User Password', items: [{ text: 'Enter New Password', value: '[ ]', editable: true }] },
-    load_defaults: { type: 'sub', title: 'Load Optimal Defaults', items: [{ text: 'Load Optimal Defaults?', value: '[OK]', editable: true }] },
-    save_exit: { type: 'sub', title: 'Save & Exit Setup', items: [{ text: 'Save to CMOS and Exit (Y/N)?', value: '[Y]', editable: true }] },
+    load_defaults: { type: 'sub', title: 'Load Optimal Defaults', items: [{ text: 'Load Optimal Defaults (Y/N)?', value: '[Y]', editable: true }] },
+    save_exit: { type: 'sub', title: 'Save & Exit Setup', items: [{ text: 'SAVE to CMOS and EXIT (Y/N)?', value: '[Y]', editable: true }] },
     exit_no_save: { type: 'sub', title: 'Exit Without Saving', items: [{ text: 'Quit without saving (Y/N)?', value: '[Y]', editable: true }] }
 };
 
@@ -156,7 +152,7 @@ function renderScreen() {
 
             const textSpan = document.createElement('span');
             textSpan.textContent = item.text;
-            textSpan.style.width = '280px';
+            textSpan.style.width = '320px';
 
             const valSpan = document.createElement('span');
             valSpan.textContent = item.value || '';
