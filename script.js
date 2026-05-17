@@ -435,37 +435,3 @@ function adjustActiveRowForSensors(itemsList, direction) {
         while (activeRow >= 0 && items[activeRow].isSensor) activeRow--;
     }
 }
-// دالة لتشغيل وتحديث الوقت والتاريخ بشكل حي ومباشر
-// دالة ذكية ومحمية لتحديث الوقت والتاريخ لايف بدون أي خطأ برمجّي
-function startLiveTimeAndDate() {
-    setInterval(() => {
-        // نبحث عن العناصر فقط إذا كانت معروضة حالياً على الشاشة
-        const valueElements = document.querySelectorAll('.menu-value, .bios-main span');
-       
-        valueElements.forEach(el => {
-            const text = el.parentElement ? el.parentElement.textContent : '';
-            const now = new Date();
-           
-            // تحديث الوقت الحقيقي
-            if (text.includes('System Time')) {
-                const hrs = String(now.getHours()).padStart(2, '0');
-                const mins = String(now.getMinutes()).padStart(2, '0');
-                const secs = String(now.getSeconds()).padStart(2, '0');
-                el.textContent = `[${hrs}:${mins}:${secs}]`;
-            }
-           
-            // تحديث التاريخ الحقيقي
-            if (text.includes('System Date')) {
-                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                const dayName = days[now.getDay()];
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const date = String(now.getDate()).padStart(2, '0');
-                const year = now.getFullYear();
-                el.textContent = `[${dayName} ${month}/${date}/${year}]`;
-            }
-        });
-    }, 1000);
-}
-
-// تشغيل العداد الحي بأمان
-startLiveTimeAndDate();
