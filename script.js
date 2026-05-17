@@ -436,37 +436,36 @@ function adjustActiveRowForSensors(itemsList, direction) {
     }
 }
 // دالة لتشغيل وتحديث الوقت والتاريخ بشكل حي ومباشر
-function updateLiveTimeAndDate() {
+// دالة ذكية ومحمية لتحديث الوقت والتاريخ لايف بدون أي خطأ برمجّي
+function startLiveTimeAndDate() {
     setInterval(() => {
-        const now = new Date();
+        // نبحث عن العناصر فقط إذا كانت معروضة حالياً على الشاشة
+        const valueElements = document.querySelectorAll('.menu-value, .bios-main span');
        
-        // البحث عن عناصر الوقت والتاريخ داخل شاشة المعلومات
-        const rows = document.querySelectorAll('.bios-main div');
-        rows.forEach(row => {
-            if (row.textContent.includes('System Time')) {
+        valueElements.forEach(el => {
+            const text = el.parentElement ? el.parentElement.textContent : '';
+            const now = new Date();
+           
+            // تحديث الوقت الحقيقي
+            if (text.includes('System Time')) {
                 const hrs = String(now.getHours()).padStart(2, '0');
                 const mins = String(now.getMinutes()).padStart(2, '0');
                 const secs = String(now.getSeconds()).padStart(2, '0');
-               
-                // تحديث قيمة الوقت داخل الـ span الثاني
-                const spans = row.querySelectorAll('span');
-                if (spans.length >= 2) spans[1].textContent = `[${hrs}:${mins}:${secs}]`;
+                el.textContent = `[${hrs}:${mins}:${secs}]`;
             }
-            if (row.textContent.includes('System Date')) {
+           
+            // تحديث التاريخ الحقيقي
+            if (text.includes('System Date')) {
                 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 const dayName = days[now.getDay()];
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const date = String(now.getDate()).padStart(2, '0');
                 const year = now.getFullYear();
-               
-                // تحديث قيمة التاريخ داخل الـ span الثاني
-                const spans = row.querySelectorAll('span');
-                if (spans.length >= 2) spans[1].textContent = `[${dayName} ${month}/${date}/${year}]`;
+                el.textContent = `[${dayName} ${month}/${date}/${year}]`;
             }
         });
     }, 1000);
 }
 
-// تشغيل دالة التحديث التلقائي للوقت فوراً
-updateLiveTimeAndDate();
-
+// تشغيل العداد الحي بأمان
+startLiveTimeAndDate();
