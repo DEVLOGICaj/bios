@@ -13,92 +13,54 @@ const biosData = {
             ],
             [
                 { text: 'PC Health Status', target: 'pc_health', desc: 'Monitor PC Health Status, Temperature and Fan Speed...' },
-                { text: 'Set Supervisor Password', target: null, desc: 'Set or change Supervisor Password...' },
-                { text: 'Set User Password', target: null, desc: 'Set or change User Password...' },
-                { text: 'Load Optimal Defaults', target: null, desc: 'Load Optimal Default configurations...' },
-                { text: 'Save & Exit Setup', target: null, desc: 'Save all changes to CMOS and Exit...' },
-                { text: 'Exit Without Saving', target: null, desc: 'Exit Utility without saving any changes...' }
+                { text: 'Set Supervisor Password', target: 'supervisor_pwd', desc: 'Set or change Supervisor Password...' },
+                { text: 'Set User Password', target: 'user_pwd', desc: 'Set or change User Password...' },
+                { text: 'Load Optimal Defaults', target: 'load_defaults', desc: 'Load Optimal Default configurations...' },
+                { text: 'Save & Exit Setup', target: 'save_exit', desc: 'Save all changes to CMOS and Exit...' },
+                { text: 'Exit Without Saving', target: 'exit_no_save', desc: 'Exit Utility without saving any changes...' }
             ]
         ]
     },
     sys_info: {
         type: 'sub',
-        title: 'CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.\nSystem Information',
-        columns: [
-            { text: 'System Time', value: '[00:00:00]', isClock: true },
-            { text: 'System Date', value: '[Sun 01/01/2026]', isDate: true },
-            { text: 'Primary IDE Master', value: '[ATAPI CDROM]' },
-            { text: 'Primary IDE Slave', value: '[Not Detected]' },
-            { text: 'SATA Channel 1 Master', value: '[Not Detected]' },
-            { text: 'SATA Channel 2 Master', value: '[Not Detected]' },
-            { text: 'SATA Channel 3 Master', value: '[Not Detected]' },
-            { text: 'SATA Channel 4 Master', value: '[Hard Disk]' },
-            { text: 'Floppy A', value: '[1.44 MB 3½"]' },
-            { text: 'Halt On', value: '[No Errors]' },
-            { text: 'Model Name', value: ': G41MXE', isLabel: true },
-            { text: 'BIOS Version', value: ': L08', isLabel: true },
-            { text: 'System Memory', value: ': 2048MB', isLabel: true },
-            { text: 'CPUID', value: ': 1067A', isLabel: true }
+        title: 'System Information',
+        items: [
+            { text: 'System Time', value: '[00:00:00]', editable: true, id: 'system-time' },
+            { text: 'System Date', value: '[Sun 01/01/2026]', editable: true, id: 'system-date' },
+            { text: 'Primary IDE Master', value: '[ATAPI CDROM]', editable: false },
+            { text: 'Primary IDE Slave', value: '[Not Detected]', editable: false },
+            { text: 'SATA Channel 1 Master', value: '[Not Detected]', editable: false },
+            { text: 'SATA Channel 2 Master', value: '[Not Detected]', editable: false },
+            { text: 'BIOS Version', value: '[08.00.15]', editable: false },
+            { text: 'Build Date', value: '[10/14/2008]', editable: false },
+            { text: 'System Memory', value: '[2048 MB]', editable: false }
         ]
     },
     boot_priority: {
         type: 'sub',
-        title: 'Advanced BIOS Features',
-        columns: [
-            { text: '1st Boot Device', value: '[CD/DVD:PM-HL-DT-ST]' },
-            { text: '2nd Boot Device', value: '[SATA:4S-WDC WD5000]' },
-            { text: '3rd Boot Device', value: '[1st FLOPPY DRIVE]' },
-            { text: 'Try Other Boot Devices', value: '[Yes]' }
+        title: 'Boot Device Priority',
+        help: 'Specifies the boot sequence from the available devices.\\n\\nA device enclosed in parenthesis has been disabled in the corresponding type menu.',
+        items: [
+            { id: 'boot1', text: '1st Boot Device', value: '[CD/DVD:PM-HL-DT-ST]', editable: true, options: ['CD/DVD:PM-HL-DT-ST', 'SATA:4S-WDC WD5000', '1st FLOPPY DRIVE', 'Disabled'] },
+            { id: 'boot2', text: '2nd Boot Device', value: '[SATA:4S-WDC WD5000]', editable: true, options: ['CD/DVD:PM-HL-DT-ST', 'SATA:4S-WDC WD5000', '1st FLOPPY DRIVE', 'Disabled'] },
+            { id: 'boot3', text: '3rd Boot Device', value: '[1st FLOPPY DRIVE]', editable: true, options: ['CD/DVD:PM-HL-DT-ST', 'SATA:4S-WDC WD5000', '1st FLOPPY DRIVE', 'Disabled'] },
+            { id: 'boot_try', text: 'Try Other Boot Devices', value: '[Yes]', editable: true, options: ['Yes', 'No'] }
         ]
     },
     fox_control: {
         type: 'sub',
         title: 'Fox Central Control Unit',
-        columns: [
-            { text: 'Fox Intelligent Stepping', value: '[Disabled]' },
-            { text: 'CPU Clock Ratio', value: '[9x]' },
-            { text: 'Target CPU Frequency', value: '2.70 GHz', isLabel: true }
+        items: [
+            { text: 'Fox Intelligent Stepping', value: '[Disabled]', editable: true },
+            { text: 'CPU Clock Ratio', value: '[9x]', editable: true }
         ]
     },
     chipset_features: {
         type: 'sub',
         title: 'Advanced Chipset Features',
-        columns: [
-            { text: 'North Bridge Configuration', value: '[Press Enter]' },
-            { text: 'South Bridge Configuration', value: '[Press Enter]' }
-        ]
-    },
-    integrated_peripherals: {
-        type: 'sub',
-        title: 'Integrated Peripherals',
-        columns: [
-            { text: 'Onboard LAN Controller', value: '[Enabled]' },
-            { text: 'Onboard Audio Controller', value: '[Enabled]' }
-        ]
-    },
-    power_management: {
-        type: 'sub',
-        title: 'Power Management Setup',
-        columns: [
-            { text: 'ACPI Suspend Type', value: '[S3(STR)]' },
-            { text: 'Restore on AC Power Loss', value: '[Power Off]' }
-        ]
-    },
-    pc_health: {
-        type: 'sub',
-        title: 'PC Health Status',
-        columns: [
-            { text: 'CPU Temperature', value: '42 °C / 107 °F', isLabel: true },
-            { text: 'CPU Fan Speed', value: '2150 RPM', isLabel: true },
-            { text: 'Vcore', value: '1.248 V', isLabel: true }
-        ]
-    }
-};
-
-let currentMenu = 'main';
-let activeCol = 0;
-let activeRow = 0;
-function renderScreen() {
+        items: [
+            { text: 'North Bridge Configuration', value: '[Press Enter]', editable: false },
+            function renderScreen() {
     const mainContent = document.getElementById('bios-main-content');
     const subheader = document.getElementById('bios-subheader-text');
     const descText = document.getElementById('desc-text');
@@ -108,13 +70,9 @@ function renderScreen() {
 
     const menu = biosData[currentMenu];
    
-    // تحديث العناوين العلوية
-    if (subheader) {
-        if (currentMenu === 'sys_info') {
-            subheader.innerHTML = `CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.<br><span style="display:block; text-align:center; color:#fff;">System Information</span>`;
-        } else {
-            subheader.textContent = menu.title;
-        }
+    // تحديث الهيدر العلوي بالتسمية الصحيحة
+    if (subheader && menu.title) {
+        subheader.textContent = menu.title;
     }
 
     if (menu.type === 'main') {
@@ -130,7 +88,6 @@ function renderScreen() {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = `menu-item ${activeCol === colIdx && activeRow === rowIdx ? 'active' : ''}`;
                 itemDiv.style.padding = '4px 8px';
-                itemDiv.style.cursor = 'pointer';
                 itemDiv.textContent = (colIdx === 0 ? '▶ ' : '  ') + item.text;
                 colDiv.appendChild(itemDiv);
             });
@@ -144,17 +101,15 @@ function renderScreen() {
         mainContent.className = 'bios-main sub-layout';
         mainContent.style.display = 'block';
        
-        menu.columns.forEach((item, rowIdx) => {
+        menu.items.forEach((item, rowIdx) => {
             const rowDiv = document.createElement('div');
-            rowDiv.className = 'sub-menu-row';
+            // السطر بياخد كلاس active بس إذا كان مو label وأنت واقف عليه
+            rowDiv.className = `sub-menu-row ${activeRow === rowIdx && item.editable !== false ? 'active' : ''}`;
             rowDiv.style.display = 'flex';
             rowDiv.style.padding = '2px 8px';
            
-            if (item.isLabel) {
-                rowDiv.style.color = '#aaa';
-                if (item.text === 'Model Name') rowDiv.style.marginTop = '20px';
-            } else if (activeRow === rowIdx) {
-                rowDiv.style.backgroundColor = '#aa0000'; // اللون الأحمر الكلاسيكي عند التحديد
+            if (activeRow === rowIdx && item.editable !== false) {
+                rowDiv.style.backgroundColor = '#aa0000'; // خلفية حمراء كلاسيكية للبيوس عند التحديد
                 rowDiv.style.color = '#fff';
             }
 
@@ -164,18 +119,24 @@ function renderScreen() {
 
             const valSpan = document.createElement('span');
             valSpan.textContent = item.value || '';
-            if (item.isClock) valSpan.id = 'live-bios-clock';
-            if (item.isDate) valSpan.id = 'live-bios-date';
+           
+            // ربط الـ IDs القديمة تبعك بالـ Spans عشان العداد لقطهم
+            if (item.id) {
+                valSpan.id = item.id;
+            }
 
             rowDiv.appendChild(textSpan);
             rowDiv.appendChild(valSpan);
             mainContent.appendChild(rowDiv);
         });
-        if (descText) descText.textContent = 'Use [ENTER], [TAB] or [SHIFT-TAB] to select a field. Use [+] or [-] to configure system Time/Date.';
+       
+        if (descText) {
+            descText.textContent = menu.help || 'Use [ENTER], [TAB] or [SHIFT-TAB] to select a field. Use [+] or [-] to configure system Time/Date.';
+        }
     }
 }
 
-// كود التحكم بالأزرار والتنقل الكامل بالأسهم والـ Enter والـ Escape
+// معالجة ضغطات الكيبورد والتنقل الكامل بالأسهم والدخول والخروج
 document.addEventListener('keydown', (e) => {
     const menu = biosData[currentMenu];
     if (menu.type === 'main') {
@@ -194,9 +155,8 @@ document.addEventListener('keydown', (e) => {
             }
         }
     } else if (menu.type === 'sub') {
-        const selectableCount = menu.columns.filter(i => !i.isLabel).length;
-        if (e.key === 'ArrowUp') activeRow = (activeRow - 1 + selectableCount) % selectableCount;
-        if (e.key === 'ArrowDown') activeRow = (activeRow + 1) % selectableCount;
+        if (e.key === 'ArrowUp') activeRow = (activeRow - 1 + menu.items.length) % menu.items.length;
+        if (e.key === 'ArrowDown') activeRow = (activeRow + 1) % menu.items.length;
         if (e.key === 'Escape') {
             currentMenu = 'main';
             activeRow = 0;
@@ -206,10 +166,10 @@ document.addEventListener('keydown', (e) => {
     renderScreen();
 });
 
-// تشغيل العداد الحي للوقت والتاريخ ثانية بثانية
+// تشغيل العداد الحي للوقت والتاريخ ثانية بثانية بدون تعليق الـ DOM
 setInterval(() => {
-    const clockEl = document.getElementById('live-bios-clock');
-    const dateEl = document.getElementById('live-bios-date');
+    const clockEl = document.getElementById('system-time');
+    const dateEl = document.getElementById('system-date');
     const now = new Date();
 
     if (clockEl) {
@@ -228,5 +188,5 @@ setInterval(() => {
     }
 }, 1000);
 
-// استدعاء دالة الرسم لأول مرة عند إقلاع الصفحة
+// الإقلاع والرسم المباشر فور تشغيل السكريبت
 renderScreen();
