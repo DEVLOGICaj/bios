@@ -102,6 +102,7 @@ const biosData = {
 let currentMenu = 'main';
 let activeCol = 0;
 let activeRow = 0;
+
 function renderScreen() {
     const mainContent = document.getElementById('bios-main-content');
     const subheader = document.getElementById('bios-subheader-text');
@@ -112,7 +113,6 @@ function renderScreen() {
 
     const menu = biosData[currentMenu];
    
-    // تحديث الهيدر العلوي بالتسمية الصحيحة للواجهة
     if (subheader && menu.title) {
         subheader.textContent = menu.title;
     }
@@ -150,7 +150,7 @@ function renderScreen() {
             rowDiv.style.padding = '2px 8px';
            
             if (activeRow === rowIdx) {
-                rowDiv.style.backgroundColor = '#aa0000'; // اللون الأحمر الكلاسيكي لخيارات الأستاذ فؤاد
+                rowDiv.style.backgroundColor = '#aa0000';
                 rowDiv.style.color = '#fff';
             }
 
@@ -161,7 +161,6 @@ function renderScreen() {
             const valSpan = document.createElement('span');
             valSpan.textContent = item.value || '';
            
-            // ربط معرفات الوقت والتاريخ لتلقطها دالة الـ Interval
             if (item.id) {
                 valSpan.id = item.id;
             }
@@ -177,7 +176,6 @@ function renderScreen() {
     }
 }
 
-// التحكم الكامل بالكيبورد (أسهم، Enter لتفتح الواجهات، و Escape لترجع للشاشة الرئيسية)
 document.addEventListener('keydown', (e) => {
     const menu = biosData[currentMenu];
     if (menu.type === 'main') {
@@ -207,7 +205,6 @@ document.addEventListener('keydown', (e) => {
     renderScreen();
 });
 
-// تحديث عداد الوقت والتاريخ لايف ثانية بثانية بدون أي كراش
 setInterval(() => {
     const clockEl = document.getElementById('system-time');
     const dateEl = document.getElementById('system-date');
@@ -229,5 +226,4 @@ setInterval(() => {
     }
 }, 1000);
 
-// الإقلاع والرسم المباشر فور تحميل السكريبت
 renderScreen();
