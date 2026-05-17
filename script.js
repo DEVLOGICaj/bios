@@ -5,19 +5,19 @@ const biosData = {
         columns: [
             [
                 { text: 'System Information', target: 'sys_info', desc: 'Configure Time and Date. Display System Information...' },
-                { text: 'Advanced BIOS Features', target: null, desc: 'Advanced BIOS Features Settings...' },
-                { text: 'Fox Central Control Unit', target: null, desc: 'Fox Central Control Unit configurations...' },
-                { text: 'Advanced Chipset Features', target: null, desc: 'Advanced Chipset Features and settings...' },
-                { text: 'Integrated Peripherals', target: null, desc: 'Configure integrated peripherals and ports...' },
-                { text: 'Power Management Setup', target: null, desc: 'Power Management Setup Options...' }
+                { text: 'Advanced BIOS Features', target: 'boot_priority', desc: 'Advanced BIOS Features Settings...' },
+                { text: 'Fox Central Control Unit', target: 'fox_control', desc: 'Fox Central Control Unit configurations...' },
+                { text: 'Advanced Chipset Features', target: 'chipset_features', desc: 'Advanced Chipset Features and settings...' },
+                { text: 'Integrated Peripherals', target: 'integrated_peripherals', desc: 'Configure integrated peripherals and ports...' },
+                { text: 'Power Management Setup', target: 'power_management', desc: 'Power Management Setup Options...' }
             ],
             [
-                { text: 'PC Health Status', target: null, desc: 'Monitor PC Health Status, Temperature and Fan Speed...' },
-                { text: 'Set Supervisor Password', target: null, desc: 'Set or change Supervisor Password...' },
-                { text: 'Set User Password', target: null, desc: 'Set or change User Password...' },
-                { text: 'Load Optimal Defaults', target: null, desc: 'Load Optimal Default configurations...' },
-                { text: 'Save & Exit Setup', target: null, desc: 'Save all changes to CMOS and Exit...' },
-                { text: 'Exit Without Saving', target: null, desc: 'Exit Utility without saving any changes...' }
+                { text: 'PC Health Status', target: 'pc_health', desc: 'Monitor PC Health Status, Temperature and Fan Speed...' },
+                { text: 'Set Supervisor Password', target: 'supervisor_pwd', desc: 'Set or change Supervisor Password...' },
+                { text: 'Set User Password', target: 'user_pwd', desc: 'Set or change User Password...' },
+                { text: 'Load Optimal Defaults', target: 'load_defaults', desc: 'Load Optimal Default configurations...' },
+                { text: 'Save & Exit Setup', target: 'save_exit', desc: 'Save all changes to CMOS and Exit...' },
+                { text: 'Exit Without Saving', target: 'exit_no_save', desc: 'Exit Utility without saving any changes...' }
             ]
         ]
     },
