@@ -111,7 +111,7 @@ function renderScreen() {
     // تحديث العناوين العلوية
     if (subheader) {
         if (currentMenu === 'sys_info') {
-            subheader.innerHTML = `CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.<br><span style="display:block; text-align:center;">System Information</span>`;
+            subheader.innerHTML = `CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.<br><span style="display:block; text-align:center; color:#fff;">System Information</span>`;
         } else {
             subheader.textContent = menu.title;
         }
@@ -154,7 +154,7 @@ function renderScreen() {
                 rowDiv.style.color = '#aaa';
                 if (item.text === 'Model Name') rowDiv.style.marginTop = '20px';
             } else if (activeRow === rowIdx) {
-                rowDiv.style.backgroundColor = '#aa0000'; // اللون الأحمر النشط للبيوس
+                rowDiv.style.backgroundColor = '#aa0000'; // اللون الأحمر الكلاسيكي عند التحديد
                 rowDiv.style.color = '#fff';
             }
 
@@ -175,7 +175,7 @@ function renderScreen() {
     }
 }
 
-// كود التحكم بالأزرار والتنقل الكامل
+// كود التحكم بالأزرار والتنقل الكامل بالأسهم والـ Enter والـ Escape
 document.addEventListener('keydown', (e) => {
     const menu = biosData[currentMenu];
     if (menu.type === 'main') {
@@ -206,7 +206,7 @@ document.addEventListener('keydown', (e) => {
     renderScreen();
 });
 
-// تشغيل العداد الحي بدون أي تعليق
+// تشغيل العداد الحي للوقت والتاريخ ثانية بثانية
 setInterval(() => {
     const clockEl = document.getElementById('live-bios-clock');
     const dateEl = document.getElementById('live-bios-date');
@@ -228,5 +228,5 @@ setInterval(() => {
     }
 }, 1000);
 
-// التشغيل المباشر فور تحميل الصفحة
+// استدعاء دالة الرسم لأول مرة عند إقلاع الصفحة
 renderScreen();
