@@ -463,4 +463,4 @@ function updateLiveTimeAndDate() {
 
 // تشغيل دالة التحديث التلقائي للوقت فوراً
 updateLiveTimeAndDate();
-renderScreen();
+
