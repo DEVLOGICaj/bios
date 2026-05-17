@@ -31,20 +31,21 @@ const biosData = {
             { text: 'Primary IDE Slave', value: '[Not Detected]', editable: false },
             { text: 'SATA Channel 1 Master', value: '[Not Detected]', editable: false },
             { text: 'SATA Channel 2 Master', value: '[Not Detected]', editable: false },
-            { text: 'BIOS Version', value: '[08.00.15]', editable: false },
-            { text: 'Build Date', value: '[10/14/2008]', editable: false },
-            { text: 'System Memory', value: '[2048 MB]', editable: false }
+            { text: 'SATA Channel 3 Master', value: '[Not Detected]', editable: false },
+            { text: 'SATA Channel 4 Master', value: '[Hard Disk]', editable: false },
+            { text: 'Floppy A', value: '[1.44 MB 3½"]', editable: false },
+            { text: 'Halt On', value: '[No Errors]', editable: true }
         ]
     },
     boot_priority: {
         type: 'sub',
-        title: 'Boot Device Priority',
-        help: 'Specifies the boot sequence from the available devices.\\n\\nA device enclosed in parenthesis has been disabled in the corresponding type menu.',
+        title: 'Advanced BIOS Features',
+        help: 'Specifies the boot sequence from the available devices.',
         items: [
-            { id: 'boot1', text: '1st Boot Device', value: '[CD/DVD:PM-HL-DT-ST]', editable: true, options: ['CD/DVD:PM-HL-DT-ST', 'SATA:4S-WDC WD5000', '1st FLOPPY DRIVE', 'Disabled'] },
-            { id: 'boot2', text: '2nd Boot Device', value: '[SATA:4S-WDC WD5000]', editable: true, options: ['CD/DVD:PM-HL-DT-ST', 'SATA:4S-WDC WD5000', '1st FLOPPY DRIVE', 'Disabled'] },
-            { id: 'boot3', text: '3rd Boot Device', value: '[1st FLOPPY DRIVE]', editable: true, options: ['CD/DVD:PM-HL-DT-ST', 'SATA:4S-WDC WD5000', '1st FLOPPY DRIVE', 'Disabled'] },
-            { id: 'boot_try', text: 'Try Other Boot Devices', value: '[Yes]', editable: true, options: ['Yes', 'No'] }
+            { id: 'boot1', text: '1st Boot Device', value: '[CD/DVD:PM-HL-DT-ST]', editable: true },
+            { id: 'boot2', text: '2nd Boot Device', value: '[SATA:4S-WDC WD5000]', editable: true },
+            { id: 'boot3', text: '3rd Boot Device', value: '[1st FLOPPY DRIVE]', editable: true },
+            { id: 'boot_try', text: 'Try Other Boot Devices', value: '[Yes]', editable: true }
         ]
     },
     fox_control: {
@@ -60,7 +61,48 @@ const biosData = {
         title: 'Advanced Chipset Features',
         items: [
             { text: 'North Bridge Configuration', value: '[Press Enter]', editable: false },
-            function renderScreen() {
+            { text: 'South Bridge Configuration', value: '[Press Enter]', editable: false }
+        ]
+    },
+    integrated_peripherals: {
+        type: 'sub',
+        title: 'Integrated Peripherals',
+        items: [
+            { text: 'Onboard LAN Controller', value: '[Enabled]', editable: true },
+            { text: 'Onboard Audio Controller', value: '[Enabled]', editable: true },
+            { text: 'USB Keyboard Function', value: '[Enabled]', editable: true }
+        ]
+    },
+    power_management: {
+        type: 'sub',
+        title: 'Power Management Setup',
+        items: [
+            { text: 'ACPI Suspend Type', value: '[S3(STR)]', editable: true },
+            { text: 'Restore on AC Power Loss', value: '[Power Off]', editable: true }
+        ]
+    },
+    pc_health: {
+        type: 'sub',
+        title: 'PC Health Status',
+        items: [
+            { text: 'CPU Temperature', value: '40 °C / 104 °F', editable: false },
+            { text: 'System Temperature', value: '33 °C / 91 °F', editable: false },
+            { text: 'CPU Fan Speed', value: '2295 RPM', editable: false },
+            { text: 'Vcore', value: '1.248 V', editable: false },
+            { text: '3.3V Voltage', value: '3.328 V', editable: false }
+        ]
+    },
+    supervisor_pwd: { type: 'sub', title: 'Set Supervisor Password', items: [{ text: 'Enter New Password', value: '[ ]', editable: true }] },
+    user_pwd: { type: 'sub', title: 'Set User Password', items: [{ text: 'Enter New Password', value: '[ ]', editable: true }] },
+    load_defaults: { type: 'sub', title: 'Load Optimal Defaults', items: [{ text: 'Load Optimal Defaults?', value: '[OK]', editable: true }] },
+    save_exit: { type: 'sub', title: 'Save & Exit Setup', items: [{ text: 'Save to CMOS and Exit (Y/N)?', value: '[Y]', editable: true }] },
+    exit_no_save: { type: 'sub', title: 'Exit Without Saving', items: [{ text: 'Quit without saving (Y/N)?', value: '[Y]', editable: true }] }
+};
+
+let currentMenu = 'main';
+let activeCol = 0;
+let activeRow = 0;
+function renderScreen() {
     const mainContent = document.getElementById('bios-main-content');
     const subheader = document.getElementById('bios-subheader-text');
     const descText = document.getElementById('desc-text');
@@ -70,7 +112,7 @@ const biosData = {
 
     const menu = biosData[currentMenu];
    
-    // تحديث الهيدر العلوي بالتسمية الصحيحة
+    // تحديث الهيدر العلوي بالتسمية الصحيحة للواجهة
     if (subheader && menu.title) {
         subheader.textContent = menu.title;
     }
@@ -103,13 +145,12 @@ const biosData = {
        
         menu.items.forEach((item, rowIdx) => {
             const rowDiv = document.createElement('div');
-            // السطر بياخد كلاس active بس إذا كان مو label وأنت واقف عليه
-            rowDiv.className = `sub-menu-row ${activeRow === rowIdx && item.editable !== false ? 'active' : ''}`;
+            rowDiv.className = `sub-menu-row ${activeRow === rowIdx ? 'active' : ''}`;
             rowDiv.style.display = 'flex';
             rowDiv.style.padding = '2px 8px';
            
-            if (activeRow === rowIdx && item.editable !== false) {
-                rowDiv.style.backgroundColor = '#aa0000'; // خلفية حمراء كلاسيكية للبيوس عند التحديد
+            if (activeRow === rowIdx) {
+                rowDiv.style.backgroundColor = '#aa0000'; // اللون الأحمر الكلاسيكي لخيارات الأستاذ فؤاد
                 rowDiv.style.color = '#fff';
             }
 
@@ -120,7 +161,7 @@ const biosData = {
             const valSpan = document.createElement('span');
             valSpan.textContent = item.value || '';
            
-            // ربط الـ IDs القديمة تبعك بالـ Spans عشان العداد لقطهم
+            // ربط معرفات الوقت والتاريخ لتلقطها دالة الـ Interval
             if (item.id) {
                 valSpan.id = item.id;
             }
@@ -136,7 +177,7 @@ const biosData = {
     }
 }
 
-// معالجة ضغطات الكيبورد والتنقل الكامل بالأسهم والدخول والخروج
+// التحكم الكامل بالكيبورد (أسهم، Enter لتفتح الواجهات، و Escape لترجع للشاشة الرئيسية)
 document.addEventListener('keydown', (e) => {
     const menu = biosData[currentMenu];
     if (menu.type === 'main') {
@@ -166,7 +207,7 @@ document.addEventListener('keydown', (e) => {
     renderScreen();
 });
 
-// تشغيل العداد الحي للوقت والتاريخ ثانية بثانية بدون تعليق الـ DOM
+// تحديث عداد الوقت والتاريخ لايف ثانية بثانية بدون أي كراش
 setInterval(() => {
     const clockEl = document.getElementById('system-time');
     const dateEl = document.getElementById('system-date');
@@ -188,5 +229,5 @@ setInterval(() => {
     }
 }, 1000);
 
-// الإقلاع والرسم المباشر فور تشغيل السكريبت
+// الإقلاع والرسم المباشر فور تحميل السكريبت
 renderScreen();
