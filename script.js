@@ -29,13 +29,19 @@ const biosData = {
     sys_info: {
         type: 'sub',
         title: 'System Information',
-        help: 'Display System Information and configurations.',
-        items: [
-            { text: 'BIOS Version', value: '08.00.15', editable: false, desc: 'Core BIOS Version.' },
-            { text: 'Build Date', value: '10/14/2008', editable: false, desc: 'BIOS Release Build Date.' },
-            { text: 'System Memory', value: '2048 MB', editable: false, desc: 'Total installed system memory.' }
+        columns: [
+            { text: 'System Time', value: '[00:00:00]', editable: true, id: 'system-time' },
+            { text: 'System Date', value: '[Sun 01/01/2026]', editable: true, id: 'system-date' },
+            { text: 'Primary IDE Master', value: '[ATAPI CDROM]', editable: false },
+            { text: 'Primary IDE Slave', value: '[Not Detected]', editable: false },
+            { text: 'SATA Channel 1 Master', value: '[Not Detected]', editable: false },
+            { text: 'SATA Channel 2 Master', value: '[Not Detected]', editable: false },
+            { text: 'BIOS Version', value: '[08.00.15]', editable: false },
+            { text: 'Build Date', value: '[10/14/2008]', editable: false },
+            { text: 'System Memory', value: '[2048 MB]', editable: false }
         ]
     },
+
     // شاشة البوت (ترتيب الإقلاع) - مع ميزة التبديل (Swap)
     boot_priority: {
         type: 'sub',
