@@ -13,11 +13,11 @@ const biosData = {
             ],
             [
                 { text: 'PC Health Status', target: 'pc_health', desc: 'Monitor PC Health Status, Temperature and Fan Speed...' },
-                { text: 'Set Supervisor Password', target: 'supervisor_pwd', desc: 'Set or change Supervisor Password...' },
-                { text: 'Set User Password', target: 'user_pwd', desc: 'Set or change User Password...' },
-                { text: 'Load Optimal Defaults', target: 'load_defaults', desc: 'Load Optimal Default configurations...' },
-                { text: 'Save & Exit Setup', target: 'save_exit', desc: 'Save all changes to CMOS and Exit...' },
-                { text: 'Exit Without Saving', target: 'exit_no_save', desc: 'Exit Utility without saving any changes...' }
+                { text: 'Set Supervisor Password', target: null, desc: 'Set or change Supervisor Password...' },
+                { text: 'Set User Password', target: null, desc: 'Set or change User Password...' },
+                { text: 'Load Optimal Defaults', target: null, desc: 'Load Optimal Default configurations...' },
+                { text: 'Save & Exit Setup', target: null, desc: 'Save all changes to CMOS and Exit...' },
+                { text: 'Exit Without Saving', target: null, desc: 'Exit Utility without saving any changes...' }
             ]
         ]
     },
@@ -40,6 +40,58 @@ const biosData = {
             { text: 'System Memory', value: ': 2048MB', isLabel: true },
             { text: 'CPUID', value: ': 1067A', isLabel: true }
         ]
+    },
+    boot_priority: {
+        type: 'sub',
+        title: 'Advanced BIOS Features',
+        columns: [
+            { text: '1st Boot Device', value: '[CD/DVD:PM-HL-DT-ST]' },
+            { text: '2nd Boot Device', value: '[SATA:4S-WDC WD5000]' },
+            { text: '3rd Boot Device', value: '[1st FLOPPY DRIVE]' },
+            { text: 'Try Other Boot Devices', value: '[Yes]' }
+        ]
+    },
+    fox_control: {
+        type: 'sub',
+        title: 'Fox Central Control Unit',
+        columns: [
+            { text: 'Fox Intelligent Stepping', value: '[Disabled]' },
+            { text: 'CPU Clock Ratio', value: '[9x]' },
+            { text: 'Target CPU Frequency', value: '2.70 GHz', isLabel: true }
+        ]
+    },
+    chipset_features: {
+        type: 'sub',
+        title: 'Advanced Chipset Features',
+        columns: [
+            { text: 'North Bridge Configuration', value: '[Press Enter]' },
+            { text: 'South Bridge Configuration', value: '[Press Enter]' }
+        ]
+    },
+    integrated_peripherals: {
+        type: 'sub',
+        title: 'Integrated Peripherals',
+        columns: [
+            { text: 'Onboard LAN Controller', value: '[Enabled]' },
+            { text: 'Onboard Audio Controller', value: '[Enabled]' }
+        ]
+    },
+    power_management: {
+        type: 'sub',
+        title: 'Power Management Setup',
+        columns: [
+            { text: 'ACPI Suspend Type', value: '[S3(STR)]' },
+            { text: 'Restore on AC Power Loss', value: '[Power Off]' }
+        ]
+    },
+    pc_health: {
+        type: 'sub',
+        title: 'PC Health Status',
+        columns: [
+            { text: 'CPU Temperature', value: '42 °C / 107 °F', isLabel: true },
+            { text: 'CPU Fan Speed', value: '2150 RPM', isLabel: true },
+            { text: 'Vcore', value: '1.248 V', isLabel: true }
+        ]
     }
 };
 
@@ -56,6 +108,7 @@ function renderScreen() {
 
     const menu = biosData[currentMenu];
    
+    // تحديث العناوين العلوية
     if (subheader) {
         if (currentMenu === 'sys_info') {
             subheader.innerHTML = `CMOS Setup Utility - Copyright (C) 1985-2008, American Megatrends, Inc.<br><span style="display:block; text-align:center;">System Information</span>`;
@@ -101,7 +154,7 @@ function renderScreen() {
                 rowDiv.style.color = '#aaa';
                 if (item.text === 'Model Name') rowDiv.style.marginTop = '20px';
             } else if (activeRow === rowIdx) {
-                rowDiv.style.backgroundColor = '#aa0000';
+                rowDiv.style.backgroundColor = '#aa0000'; // اللون الأحمر النشط للبيوس
                 rowDiv.style.color = '#fff';
             }
 
@@ -122,6 +175,7 @@ function renderScreen() {
     }
 }
 
+// كود التحكم بالأزرار والتنقل الكامل
 document.addEventListener('keydown', (e) => {
     const menu = biosData[currentMenu];
     if (menu.type === 'main') {
@@ -152,6 +206,7 @@ document.addEventListener('keydown', (e) => {
     renderScreen();
 });
 
+// تشغيل العداد الحي بدون أي تعليق
 setInterval(() => {
     const clockEl = document.getElementById('live-bios-clock');
     const dateEl = document.getElementById('live-bios-date');
@@ -173,4 +228,5 @@ setInterval(() => {
     }
 }, 1000);
 
+// التشغيل المباشر فور تحميل الصفحة
 renderScreen();
