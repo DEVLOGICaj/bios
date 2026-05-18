@@ -1,1 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AMI BIOS 2008 FULL</title>
 
+<style>
+
+body{
+    margin:0;
+    background:black;
+    overflow:hidden;
+    font-family:Courier New;
+}
+
+#bios{
+    width:100vw;
+    height:100vh;
+    background:#001a8c;
+    color:#d6d6d6;
+    padding:10px;
+    box-sizing:border-box;
+}
+
+.header{
+    text-align:center;
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.main{
+    border:2px solid white;
+    height:70%;
+    display:flex;
+}
+
+.column{
+    width:50%;
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.column:first-child{
+    border-right:2px solid white;
+}
+
+.item{
+    padding:6px 10px;
+    margin-bottom:8px;
+    font-size:24px;
+}
+
+.selected{
+    background:red;
+    color:white;
+}
+
+.help{
+    margin-top:10px;
+    border-top:2px solid white;
+    padding-top:10px;
+    font-size:20px;
+}
+
+.keys{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+
+.window{
+    position:absolute;
+    top:50px;
+    left:50%;
+    transform:translateX(-50%);
+    width:80%;
+    height:75%;
+    background:#001a8c;
+    border:2px solid white;
+    display:none;
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.window-title{
+    text-align:center;
+    font-size:24px;
+    margin-bottom:20px;
+}
+
+.sub-item{
+    display:flex;
+    justify-content:space-between;
+    padding:6px;
+    font-size:22px;
+}
+
+.sub-selected{
+    background:red;
+    color:white;
+}
+
+.popup{
+    position:absolute;
+    width:350px;
+    background:#c0c0c0;
+    color:black;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    border:3px solid white;
+    display:none;
+}
+
+.popup-head{
+    background:#000080;
+    color:white;
+    padding:8px;
+}
+
+.popup-body{
+    padding:20px;
+    text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="bios">
+
+<div class="header">
+CMOS Setup Utility - Copyright (C) 1995-2008 American Megatrends, Inc.
+</div>
+
+<div class="main">
+
+<div class="column" id="left"></div>
+
+<div class="column" id="right"></div>
+
+</div>
+
+<div class="help">
+
+<div class="keys">
+<div>↑↓←→ Move</div>
+<div>Enter Select</div>
+<div>+/- Change</div>
+<div>F10 Save</div>
+<div>ESC Exit</div>
+</div>
+
+<div id="helpText">
+Configure BIOS settings
+</div>
+
+</div>
+
+</div>
+
+<div class="window" id="window">
+
+<div class="window-title" id="windowTitle"></div>
+
+<div id="windowItems"></div>
+
+</div>
+
+<div class="popup" id="popup">
+
+<div class="popup-head">
+BIOS Message
+</div>
+
+<div class="popup-body" id="popupText">
+Saved Successfully
+</div>
+
+</div>
+
+<script>
+
+const leftMenu = [
+
+"System Information",
+"Advanced BIOS Features",
+"Fox Central Control Unit",
+"Advanced Chipset Features",
+"Integrated Peripherals",
+"Power Management Setup"
+
+];
+
+const rightMenu = [
+
+"PC Health Status",
+"Boot Device Priority",
+"Hard Disk Drives",
+"Load Optimal Defaults",
+"Save & Exit Setup",
+"Exit Without Saving"
+
+];
+
+const pages = {
+
+"System Information":[
+
+{name:"System Time",value:"12:00:00",values:[]},
+{name:"System Date",value:"01/01/2008",values:[]},
+{name:"Primary IDE Master",value:"ATAPI CDROM",values:[]},
+{name:"Primary IDE Slave",value:"Not Detected",values:[]},
+{name:"SATA Channel 1",value:"WDC 500GB",values:[]},
+{name:"SATA Channel 2",value:"Not Detected",values:[]},
+{name:"SATA Channel 3",value:"Not Detected",values:[]},
+{name:"SATA Channel 4",value:"Not Detected",values:[]},
+{name:"Drive A",value:"1.44M",values:[]},
+{name:"Halt On",value:"No Errors",values:["No Errors","All Errors"]},
+{name:"BIOS Version",value:"02.63",values:[]},
+{name:"Processor",value:"Intel Core 2 Duo",values:[]},
+{name:"Memory Size",value:"4096MB",values:[]}
+
+],
+
+"Advanced BIOS Features":[
+
+{name:"Quick Boot",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"Quiet Boot",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB Boot",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"Bootup NumLock",value:"On",values:["On","Off"]}
+
+],
+
+"Fox Central Control Unit":[
+
+{name:"CPU Clock",value:"Auto",values:["Auto","Manual"]},
+{name:"Smart Fan",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"CPU Voltage",value:"Auto",values:["Auto","1.2V","1.3V"]},
+{name:"System Fan",value:"Enabled",values:["Enabled","Disabled"]}
+
+],
+
+"Advanced Chipset Features":[
+
+{name:"North Bridge",value:"Press Enter",values:[]},
+{name:"South Bridge",value:"Press Enter",values:[]}
+
+],
+
+"Integrated Peripherals":[
+
+{name:"USB Configuration",value:"Press Enter",values:[]},
+{name:"Onboard LAN",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"HD Audio",value:"Enabled",values:["Enabled","Disabled"]}
+
+],
+
+"USB Configuration":[
+
+{name:"USB Devices",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB Support",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB 1.1 Controller",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB 2.0 Controller",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB Keyboard Support",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB Mouse Support",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"USB Storage",value:"Enabled",values:["Enabled","Disabled"]}
+
+],
+
+"Power Management Setup":[
+
+{name:"ACPI Suspend",value:"S3",values:["S1","S3"]},
+{name:"PS/2 Keyboard PowerOn",value:"Disabled",values:["Enabled","Disabled"]},
+{name:"PS/2 Mouse PowerOn",value:"Disabled",values:["Enabled","Disabled"]}
+
+],
+
+"PC Health Status":[
+
+{name:"CPU Temperature",value:"39C",values:[]},
+{name:"System Temperature",value:"33C",values:[]},
+{name:"CPU Fan Speed",value:"2200RPM",values:[]},
+{name:"SYS Fan Speed",value:"1800RPM",values:[]},
+{name:"CPU Voltage",value:"1.25V",values:[]},
+{name:"+3.3V",value:"3.31V",values:[]},
+{name:"+5V",value:"5.04V",values:[]},
+{name:"+12V",value:"12.1V",values:[]},
+{name:"Smart Fan",value:"Enabled",values:["Enabled","Disabled"]},
+{name:"Warning Temperature",value:"70C",values:["60C","70C","80C"]},
+{name:"Shutdown Temperature",value:"90C",values:["80C","90C","100C"]}
+
+],
+
+"Boot Device Priority":[
+
+{name:"1st Boot Device",value:"CD/DVD",values:["CD/DVD","Hard Disk","USB","Floppy"]},
+{name:"2nd Boot Device",value:"Hard Disk",values:["CD/DVD","Hard Disk","USB","Floppy"]},
+{name:"3rd Boot Device",value:"USB",values:["CD/DVD","Hard Disk","USB","Floppy"]},
+{name:"Try Other Boot Device",value:"No",values:["Yes","No"]}
+
+]
+
+};
+
+let side="left";
+let leftIndex=0;
+let rightIndex=0;
+
+function renderMain(){
+
+const left=document.getElementById("left");
+const right=document.getElementById("right");
+
+left.innerHTML="";
+right.innerHTML="";
+
+leftMenu.forEach((item,index)=>{
+
+const div=document.createElement("div");
+
+div.className="item";
+
+if(side==="left" && index===leftIndex){
+div.classList.add("selected");
+}
+
+div.innerText="▶ "+item;
+
+left.appendChild(div);
+
+});
+
+rightMenu.forEach((item,index)=>{
+
+const div=document.createElement("div");
+
+div.className="item";
+
+if(side==="right" && index===rightIndex){
+div.classList.add("selected");
+}
+
+div.innerText="▶ "+item;
+
+right.appendChild(div);
+
+});
+
+}
+
+renderMain();
+
+let currentPage="";
+let subIndex=0;
+
+function openPage(name){
+
+currentPage=name;
+
+subIndex=0;
+
+document.getElementById("window").style.display="block";
+
+document.getElementById("windowTitle").innerText=name;
+
+renderPage();
+
+}
+
+function renderPage(){
+
+const box=document.getElementById("windowItems");
+
+box.innerHTML="";
+
+let items=[...pages[currentPage]];
+
+if(currentPage==="USB Configuration"){
+
+const usb11=items.find(x=>x.name==="USB 1.1 Controller");
+
+if(usb11.value==="Disabled"){
+
+items=items.filter(x=>x.name!=="USB 2.0 Controller");
+
+}
+
+}
+
+items.forEach((item,index)=>{
+
+const div=document.createElement("div");
+
+div.className="sub-item";
+
+if(index===subIndex){
+div.classList.add("sub-selected");
+}
+
+div.innerHTML=`
+<span>${item.name}</span>
+<span>[${item.value}]</span>
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+window.addEventListener("keydown",e=>{
+
+const win=document.getElementById("window");
+
+if(win.style.display==="block"){
+
+let items=pages[currentPage];
+
+if(currentPage==="USB Configuration"){
+
+const usb11=items.find(x=>x.name==="USB 1.1 Controller");
+
+if(usb11.value==="Disabled"){
+
+items=items.filter(x=>x.name!=="USB 2.0 Controller");
+
+}
+
+}
+
+if(e.key==="ArrowDown"){
+
+subIndex++;
+
+if(subIndex>=items.length){
+subIndex=0;
+}
+
+renderPage();
+
+}
+
+else if(e.key==="ArrowUp"){
+
+subIndex--;
+
+if(subIndex<0){
+subIndex=items.length-1;
+}
+
+renderPage();
+
+}
+
+else if(e.key==="+" || e.key==="="){
+
+const item=items[subIndex];
+
+if(item.values.length>0){
+
+let i=item.values.indexOf(item.value);
+
+i++;
+
+if(i>=item.values.length){
+i=0;
+}
+
+item.value=item.values[i];
+
+renderPage();
+
+}
+
+}
+
+else if(e.key==="-" ){
+
+const item=items[subIndex];
+
+if(item.values.length>0){
+
+let i=item.values.indexOf(item.value);
+
+i--;
+
+if(i<0){
+i=item.values.length-1;
+}
+
+item.value=item.values[i];
+
+renderPage();
+
+}
+
+}
+
+else if(e.key==="Enter"){
+
+const item=items[subIndex];
+
+if(item.name==="USB Configuration"){
+
+openPage("USB Configuration");
+
+}
+
+}
+
+else if(e.key==="Escape"){
+
+win.style.display="none";
+
+}
+
+return;
+
+}
+
+if(e.key==="ArrowDown"){
+
+if(side==="left"){
+
+leftIndex++;
+
+if(leftIndex>=leftMenu.length){
+leftIndex=0;
+}
+
+}else{
+
+rightIndex++;
+
+if(rightIndex>=rightMenu.length){
+rightIndex=0;
+}
+
+}
+
+renderMain();
+
+}
+
+else if(e.key==="ArrowUp"){
+
+if(side==="left"){
+
+leftIndex--;
+
+if(leftIndex<0){
+leftIndex=leftMenu.length-1;
+}
+
+}else{
+
+rightIndex--;
+
+if(rightIndex<0){
+rightIndex=rightMenu.length-1;
+}
+
+}
+
+renderMain();
+
+}
+
+else if(e.key==="ArrowLeft"){
+
+side="left";
+
+renderMain();
+
+}
+
+else if(e.key==="ArrowRight"){
+
+side="right";
+
+renderMain();
+
+}
+
+else if(e.key==="Enter"){
+
+const item=
+side==="left"
+? leftMenu[leftIndex]
+: rightMenu[rightIndex];
+
+if(pages[item]){
+
+openPage(item);
+
+}
+
+}
+
+else if(e.key==="F10"){
+
+document.getElementById("popup").style.display="block";
+
+document.getElementById("popupText").innerText=
+"Save configuration and exit?";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
